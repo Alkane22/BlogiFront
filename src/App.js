@@ -44,6 +44,8 @@ const App = () => {
       setUser(user)
       blogService.setToken(user.token)
 
+      showMessage(`Greetings ${user.username}!`, false)
+
       setUsername('')
       setPassword('')
     } catch (e) {
@@ -61,6 +63,7 @@ const App = () => {
   }, [])
 
   const logout = () => {
+    showMessage(`Goodbye ${user.username}.`, false)
     setUser(null)
     window.localStorage.removeItem('blogUser')
     blogService.setToken(null)
@@ -76,6 +79,7 @@ const App = () => {
 
     try {
       await blogService.create(testBlog)
+      showMessage(`${title} by ${author} added`, false)
     } catch (e) {
       showMessage(e.response.data.error, true)
     }
@@ -84,9 +88,10 @@ const App = () => {
     setBlogs(response)
   }
 
-  const delBlog = async (id) => {
+  const delBlog = async (blog) => {
     try {
-      await blogService.deleteBlog(id)
+      await blogService.deleteBlog(blog.id)
+      showMessage(`${blog.title} by ${blog.author} deleted`, false)
     } catch (e) {
       showMessage(e.response.data.error, true)
     }
@@ -180,7 +185,7 @@ const App = () => {
 
       <h2>Blogs:</h2>
       {blogs.map((blog) =>
-        <Blog key={blog.id} blog={blog} myFunc={() => delBlog(blog.id)} />
+        <Blog key={blog.id} blog={blog} myFunc={() => delBlog(blog)} />
       )}
     </div>
   )
