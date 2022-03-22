@@ -6,6 +6,7 @@ import Message from './utils/message'
 import Togglable from './components/Togglable'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
+import like from './services/likeBlog'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -92,6 +93,14 @@ const App = () => {
     }
   }
 
+  const likeBlog = async (blog) => {
+    await like(blog.id)
+    showMessage(`You liked ${blog.title}`)
+
+    const response = await blogService.getAll()
+    setBlogs(response)
+  }
+  
   return (
     <div>
       <Message message={msg[0]} error={msg[1]} />
@@ -114,7 +123,7 @@ const App = () => {
       {blogs.map((blog) =>
         <div key={blog.id} className={'blog'}>
           <Togglable buttonLabel={'show'} blog={blog}>
-            <Blog blog={blog} myFunc={() => delBlog(blog)} />
+            <Blog blog={blog} myFunc={() => delBlog(blog)} likeFunc={() => likeBlog(blog)}/>
           </Togglable>
         </div>
       )}
