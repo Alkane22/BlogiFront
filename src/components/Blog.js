@@ -1,4 +1,5 @@
 import React from 'react'
+import propTypes from 'prop-types'
 
 const Blog = ({blog, myFunc, likeFunc}) => (
   <div>
@@ -9,5 +10,11 @@ const Blog = ({blog, myFunc, likeFunc}) => (
     <button onClick={myFunc}>Delete</button>
   </div>  
 )
+
+Blog.propTypes = {
+  blog: propTypes.object.isRequired,
+  myFunc: propTypes.func.isRequired,
+  likeFunc: propTypes.func.isRequired
+}
 
 export default Blog
