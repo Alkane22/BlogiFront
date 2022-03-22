@@ -100,7 +100,7 @@ const App = () => {
     const response = await blogService.getAll()
     setBlogs(response)
   }
-  
+
   return (
     <div>
       <Message message={msg[0]} error={msg[1]} />
