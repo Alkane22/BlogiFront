@@ -3,16 +3,15 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Message from './utils/message'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
+import LoginForm from './components/LoginForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [username, setUsername] = useState('')
-  const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
   const [msg, setMsg] = useState([null, false])
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
+  const [user, setUser] = useState(null)
+
 
   useEffect(() => {
     async function fetchData() {
@@ -29,9 +28,8 @@ const App = () => {
     }, 5000)
   }
 
-  const handleLogin = async (event) => {
+  const handleLogin = async (event, username, password) => {
     event.preventDefault()
-
     try {
       const user = await loginService.login({
         username, password
@@ -45,9 +43,6 @@ const App = () => {
       blogService.setToken(user.token)
 
       showMessage(`Greetings ${user.username}!`, false)
-
-      setUsername('')
-      setPassword('')
     } catch (e) {
       showMessage(e.response.data.error, true)
     }
@@ -69,17 +64,10 @@ const App = () => {
     blogService.setToken(null)
   }
 
-  const handleCreate = async (event) => {
-    event.preventDefault()
-    const testBlog = {
-      title: title,
-      author: author,
-      url: url
-    }
-
+  const handleCreate = async (testBlog) => {
     try {
       await blogService.create(testBlog)
-      showMessage(`${title} by ${author} added`, false)
+      showMessage(`${testBlog.title} by ${testBlog.author} added`, false)
     } catch (e) {
       showMessage(e.response.data.error, true)
     }
@@ -89,106 +77,48 @@ const App = () => {
   }
 
   const delBlog = async (blog) => {
-    try {
-      await blogService.deleteBlog(blog.id)
-      showMessage(`${blog.title} by ${blog.author} deleted`, false)
-    } catch (e) {
-      showMessage(e.response.data.error, true)
+    let result = window.confirm(`Delete ${blog.title}?`)
+
+    if (result) {
+      try {
+        await blogService.deleteBlog(blog.id)
+        showMessage(`${blog.title} by ${blog.author} deleted`, false)
+      } catch (e) {
+        showMessage(e.response.data.error, true)
+      }
+
+      const response = await blogService.getAll()
+      setBlogs(response)
     }
-
-    const response = await blogService.getAll()
-    setBlogs(response)
-  }
-
-  const LoginForm = () => {
-    return (
-      <>
-        <h1>Log in:</h1>
-        <form onSubmit={handleLogin}>
-          <div>
-            username
-            <input
-              type='text'
-              value={username}
-              onChange={({ target }) => setUsername(target.value)}
-            />
-          </div>
-          <div>
-            password
-            <input
-              type='password'
-              value={password}
-              onChange={({ target }) => setPassword(target.value)}
-            />
-          </div>
-          <div>
-            <button type='submit'>login</button>
-          </div>
-        </form>
-      </>
-    )
-  }
-
-  const BlogForm = () => {
-    return (
-      <>
-        <h1>New blog:</h1>
-        <form onSubmit={handleCreate}>
-
-          Title:
-          <div>
-            <input
-              type="text"
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </div>
-
-          Author:
-          <div>
-            <input
-              type="text"
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </div>
-
-          URL:
-          <div>
-            <input
-              type="text"
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </div>
-
-          <div>
-            <button type='submit'>Add</button>
-          </div>
-        </form>
-      </>
-    )
   }
 
   return (
     <div>
       <Message message={msg[0]} error={msg[1]} />
 
-      {user === null ?
-        LoginForm() :
-        <div>
-          Logged in as {user.username} aka {user.name} <button onClick={() => logout()}>logout</button>
-        </div>
-      }
+      <Togglable buttonLabel={'Open'} >
+        {user === null ?
+          <LoginForm handleLogin={handleLogin} /> :
+          <div>
+            Logged in as {user.username} aka {user.name} <button onClick={() => logout()}>logout</button>
+          </div>
+        }
+      </Togglable>
 
-      {BlogForm()}
+      <Togglable buttonLabel={'New note'}>
+        <BlogForm createBlog={handleCreate} />
+      </Togglable>
+
 
       <h2>Blogs:</h2>
       {blogs.map((blog) =>
-        <Blog key={blog.id} blog={blog} myFunc={() => delBlog(blog)} />
+        <div key={blog.id} className={'blog'}>
+          <Togglable buttonLabel={'show'} blog={blog}>
+            <Blog blog={blog} myFunc={() => delBlog(blog)} />
+          </Togglable>
+        </div>
       )}
     </div>
   )
 }
-
 export default App

@@ -2,7 +2,11 @@ import React from 'react'
 
 const Blog = ({blog, myFunc}) => (
   <div>
-    {blog.title} {blog.author} <button onClick={myFunc}>Delete</button>
+    <div>{blog.title}</div>
+    <div>{blog.author}</div>
+    <div>{blog.url}</div>
+    <div>{blog.likes} <button>Like</button></div>
+    <button onClick={myFunc}>Delete</button>
   </div>  
 )
 
