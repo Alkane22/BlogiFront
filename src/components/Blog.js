@@ -7,14 +7,14 @@ const Blog = ({ blog, myFunc, likeFunc }) => (
     <div>{blog.author}</div>
     <div>{blog.url}</div>
     <div>{blog.likes} <button onClick={likeFunc}>Like</button></div>
-    <button onClick={myFunc}>Delete</button>
+    <button className='delete' onClick={myFunc}>Delete</button>
   </div>
 )
 
 Blog.propTypes = {
   blog: propTypes.object.isRequired,
-  myFunc: propTypes.func.isRequired,
-  likeFunc: propTypes.func.isRequired
+  //myFunc: propTypes.func.isRequired,
+  //likeFunc: propTypes.func.isRequired
 }
 
 export default Blog
