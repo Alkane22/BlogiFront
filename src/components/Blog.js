@@ -6,7 +6,7 @@ const Blog = ({ blog, myFunc, likeFunc }) => (
     <div>{blog.title}</div>
     <div>{blog.author}</div>
     <div>{blog.url}</div>
-    <div>{blog.likes} <button onClick={likeFunc}>Like</button></div>
+    <div id='likes'>{blog.likes} <button onClick={likeFunc}>Like</button></div>
     <button className='delete' onClick={myFunc}>Delete</button>
   </div>
 )

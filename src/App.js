@@ -118,15 +118,17 @@ const App = () => {
         <BlogForm createBlog={handleCreate} />
       </Togglable>
 
+      <div id='blogs'>
+        <h2>Blogs:</h2>
 
-      <h2>Blogs:</h2>
-      {blogs.map((blog) =>
-        <div key={blog.id} className={'blog'}>
-          <Togglable buttonLabel={'show'} blog={blog}>
-            <Blog blog={blog} myFunc={() => delBlog(blog)} likeFunc={() => likeBlog(blog)}/>
-          </Togglable>
-        </div>
-      )}
+        {blogs.sort((a, b) => b.likes - a.likes).map((blog) =>
+          <div id={blog.title} key={blog.id} className={'blog'}>
+            <Togglable buttonLabel={'show'} blog={blog}>
+              <Blog blog={blog} myFunc={() => delBlog(blog)} likeFunc={() => likeBlog(blog)} />
+            </Togglable>
+          </div>
+        )}
+      </div>
     </div>
   )
 }
